@@ -1,0 +1,5637 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,viewport-fit=cover">
+<meta name="theme-color" content="#080a0d">
+<title>ForgeCode</title>
+
+<style>
+:root{
+  --bg:#080a0d;
+  --panel:#0d1014;
+  --panel2:#11151a;
+  --panel3:#171c22;
+  --border:#242b33;
+  --border2:#303944;
+  --text:#f4f6f8;
+  --muted:#7f8995;
+  --muted2:#56606c;
+  --orange:#ff7624;
+  --orange2:#ff8b43;
+  --green:#35d47c;
+  --red:#ff5263;
+  --blue:#55aaff;
+  --purple:#b98cff;
+  --yellow:#f6c85f;
+  --shadow:0 24px 80px rgba(0,0,0,.38);
+}
+
+*{
+  box-sizing:border-box;
+  scrollbar-width:thin;
+  scrollbar-color:#303943 transparent;
+}
+
+html,body{
+  width:100%;
+  height:100%;
+  margin:0;
+  overflow:hidden;
+}
+
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:Inter,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+}
+
+button,input,textarea,select{
+  font:inherit;
+}
+
+button{
+  cursor:pointer;
+}
+
+button:disabled{
+  opacity:.45;
+  cursor:not-allowed;
+}
+
+.app{
+  width:100%;
+  height:100dvh;
+  display:flex;
+  overflow:hidden;
+}
+
+
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+.sidebar{
+  width:245px;
+  min-width:245px;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+  background:#0b0e11;
+  border-right:1px solid var(--border);
+  z-index:100;
+}
+
+.brand{
+  height:64px;
+  min-height:64px;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  gap:10px;
+  border-bottom:1px solid var(--border);
+}
+
+.brand-logo{
+  width:31px;
+  height:31px;
+  border-radius:9px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  background:var(--orange);
+  color:#fff;
+  font-weight:900;
+  font-size:11px;
+  box-shadow:0 10px 30px rgba(255,118,36,.24);
+}
+
+.brand-name{
+  font-size:14px;
+  font-weight:750;
+}
+
+.brand-version{
+  margin-left:auto;
+  color:#505a65;
+  font-size:9px;
+}
+
+.sidebar-scroll{
+  flex:1;
+  min-height:0;
+  overflow:auto;
+  padding:18px 10px;
+}
+
+.nav-label{
+  padding:0 8px 8px;
+  color:#68737e;
+  font-size:9px;
+  font-weight:750;
+  letter-spacing:1.4px;
+}
+
+.nav-btn{
+  width:100%;
+  height:40px;
+  padding:0 14px;
+  display:flex;
+  align-items:center;
+  gap:11px;
+  border:0;
+  border-radius:8px;
+  color:#9ca7b2;
+  background:transparent;
+  text-align:left;
+  transition:.18s ease;
+}
+
+.nav-btn:hover{
+  color:#fff;
+  background:#151a20;
+  transform:translateX(2px);
+}
+
+.nav-btn.active{
+  color:#fff;
+  background:rgba(255,118,36,.11);
+  box-shadow:inset 2px 0 var(--orange);
+}
+
+.nav-icon{
+  width:17px;
+  min-width:17px;
+  text-align:center;
+  font-size:14px;
+}
+
+.project-mini{
+  margin:2px 3px 20px;
+  padding:12px;
+  display:flex;
+  align-items:flex-start;
+  gap:9px;
+  border:1px solid var(--border2);
+  border-radius:9px;
+  background:#101419;
+  box-shadow:0 12px 30px rgba(0,0,0,.12);
+}
+
+.project-dot{
+  width:7px;
+  height:7px;
+  margin-top:4px;
+  flex:none;
+  border-radius:50%;
+  background:var(--orange);
+  box-shadow:0 0 12px rgba(255,118,36,.7);
+}
+
+.project-mini strong{
+  display:block;
+  max-width:170px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:11px;
+}
+
+.project-mini small{
+  display:block;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.sidebar-user{
+  padding:13px 15px;
+  border-top:1px solid var(--border);
+}
+
+.user-card{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.user-avatar{
+  width:32px;
+  height:32px;
+  flex:none;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--border2);
+  background:#1b222a;
+}
+
+.user-avatar-fallback{
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  color:#fff;
+  font-size:10px;
+  font-weight:750;
+}
+
+.user-card strong{
+  display:block;
+  max-width:145px;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:11px;
+}
+
+.user-card small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.copyright{
+  margin-top:11px;
+  color:#4b555f;
+  font-size:8px;
+}
+
+
+/* =========================================================
+   MAIN
+========================================================= */
+
+.main{
+  flex:1;
+  min-width:0;
+  min-height:0;
+  height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.topbar{
+  height:64px;
+  min-height:64px;
+  padding:0 16px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#0c0f12;
+  border-bottom:1px solid var(--border);
+  z-index:50;
+}
+
+.top-project{
+  display:flex;
+  align-items:center;
+  gap:10px;
+  min-width:0;
+}
+
+.top-project-icon{
+  width:31px;
+  height:31px;
+  flex:none;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border:1px solid var(--border2);
+  border-radius:8px;
+  background:#151a20;
+}
+
+.top-project-info{
+  min-width:0;
+}
+
+.top-project-name{
+  max-width:300px;
+  display:block;
+  overflow:hidden;
+  text-overflow:ellipsis;
+  white-space:nowrap;
+  font-size:12px;
+  font-weight:700;
+}
+
+.save-state{
+  display:flex;
+  align-items:center;
+  gap:5px;
+  margin-top:3px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.save-dot{
+  width:5px;
+  height:5px;
+  border-radius:50%;
+  background:var(--green);
+}
+
+.top-actions{
+  display:flex;
+  align-items:center;
+  gap:6px;
+}
+
+.status-text{
+  color:#727d88;
+  font-size:9px;
+  margin-right:5px;
+}
+
+.top-btn{
+  height:33px;
+  padding:0 11px;
+  display:flex;
+  align-items:center;
+  gap:6px;
+  border:1px solid transparent;
+  border-radius:7px;
+  background:transparent;
+  color:#a8b1bb;
+}
+
+.top-btn:hover{
+  color:#fff;
+  background:#171c22;
+  border-color:var(--border);
+}
+
+.top-btn.primary{
+  background:var(--orange);
+  color:#fff;
+  font-weight:700;
+  box-shadow:0 8px 25px rgba(255,118,36,.2);
+}
+
+.top-btn.primary:hover{
+  background:var(--orange2);
+}
+
+
+/* =========================================================
+   PAGES
+========================================================= */
+
+.page{
+  flex:1;
+  min-width:0;
+  min-height:0;
+  display:none;
+  overflow:auto;
+}
+
+.page.active{
+  display:flex;
+}
+
+.workspace-page{
+  flex-direction:column;
+}
+
+.page-inner{
+  width:100%;
+  min-height:100%;
+  padding:24px;
+}
+
+.page-heading{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:15px;
+  margin-bottom:20px;
+}
+
+.page-heading h1{
+  margin:0;
+  font-size:21px;
+}
+
+.page-heading p{
+  margin:5px 0 0;
+  color:var(--muted);
+  font-size:11px;
+}
+
+.heading-actions{
+  display:flex;
+  gap:7px;
+  flex-wrap:wrap;
+}
+
+.action-btn{
+  height:35px;
+  padding:0 12px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border:1px solid var(--border2);
+  border-radius:7px;
+  background:#12161b;
+  color:#b7c0ca;
+}
+
+.action-btn:hover{
+  color:#fff;
+  background:#191f25;
+}
+
+.action-btn.orange{
+  border-color:transparent;
+  background:var(--orange);
+  color:#fff;
+}
+
+.action-btn.danger{
+  color:#ff7582;
+}
+
+
+/* =========================================================
+   EDITOR WORKSPACE
+========================================================= */
+
+.workspace-layout{
+  flex:1;
+  min-height:0;
+  display:grid;
+  grid-template-columns:minmax(360px,1fr) minmax(300px,42%);
+  overflow:hidden;
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+.editor-panel{
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:#090c0f;
+  border-right:1px solid var(--border);
+}
+
+.editor-tabs{
+  height:46px;
+  min-height:46px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  background:#0e1115;
+  border-bottom:1px solid var(--border);
+}
+
+.file-tabs{
+  height:100%;
+  display:flex;
+  overflow:auto;
+}
+
+.file-tab{
+  height:100%;
+  min-width:110px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  gap:7px;
+  border:0;
+  border-right:1px solid var(--border);
+  border-bottom:2px solid transparent;
+  background:transparent;
+  color:#707b86;
+  font-size:10px;
+  white-space:nowrap;
+}
+
+.file-tab:hover{
+  color:#fff;
+  background:#12171c;
+}
+
+.file-tab.active{
+  color:#fff;
+  background:#12171c;
+  border-bottom-color:var(--orange);
+}
+
+.file-close{
+  margin-left:auto;
+  color:#4d5660;
+}
+
+.editor-settings-btn{
+  width:31px;
+  height:31px;
+  margin-right:7px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#707b86;
+}
+
+.editor-settings-btn:hover{
+  color:#fff;
+  background:#171c22;
+}
+
+.editor-main{
+  flex:1;
+  min-height:0;
+  display:flex;
+  overflow:hidden;
+}
+
+.line-numbers{
+  width:50px;
+  min-width:50px;
+  padding:15px 11px 20px 0;
+  overflow:hidden;
+  background:#0a0d10;
+  border-right:1px solid #161b20;
+  color:#3e4852;
+  text-align:right;
+  font:12px/1.65 Consolas,"Courier New",monospace;
+  user-select:none;
+}
+
+.code-wrap{
+  position:relative;
+  flex:1;
+  min-width:0;
+  min-height:0;
+  overflow:hidden;
+  background:#090c0f;
+}
+
+#highlight{
+  position:absolute;
+  inset:0;
+  margin:0;
+  padding:15px 16px;
+  overflow:auto;
+  pointer-events:none;
+  white-space:pre;
+  word-wrap:normal;
+  font:12px/1.65 Consolas,"Courier New",monospace;
+}
+
+#codeEditor{
+  position:absolute;
+  inset:0;
+  width:100%;
+  height:100%;
+  margin:0;
+  padding:15px 16px;
+  resize:none;
+  outline:none;
+  border:0;
+  background:transparent;
+  color:transparent;
+  caret-color:#fff;
+  font:12px/1.65 Consolas,"Courier New",monospace;
+  white-space:pre;
+  overflow:auto;
+  tab-size:2;
+  z-index:2;
+}
+
+#codeEditor::selection{
+  background:rgba(255,118,36,.28);
+  color:transparent;
+}
+
+.editor-status{
+  height:30px;
+  min-height:30px;
+  padding:0 11px;
+  display:flex;
+  align-items:center;
+  justify-content:flex-end;
+  gap:15px;
+  color:#59636e;
+  background:#0c0f12;
+  border-top:1px solid var(--border);
+  font-size:9px;
+}
+
+
+/* CODE COLORS */
+
+.code-tag{
+  color:#ff7f91;
+}
+
+.code-attr{
+  color:#ffca72;
+}
+
+.code-string{
+  color:#a8d97c;
+}
+
+.code-comment{
+  color:#58636d;
+}
+
+.code-keyword{
+  color:#c792ea;
+}
+
+.code-function{
+  color:#82aaff;
+}
+
+.code-number{
+  color:#f78c6c;
+}
+
+.code-property{
+  color:#89ddff;
+}
+
+.code-selector{
+  color:#ffcb6b;
+}
+
+
+/* =========================================================
+   PREVIEW RIGHT
+========================================================= */
+
+.preview-panel{
+  min-width:0;
+  min-height:0;
+  display:flex;
+  flex-direction:column;
+  background:#090c0f;
+}
+
+.preview-head{
+  height:46px;
+  min-height:46px;
+  padding:0 9px;
+  display:flex;
+  align-items:center;
+  gap:8px;
+  background:#0e1115;
+  border-bottom:1px solid var(--border);
+}
+
+.preview-title{
+  display:flex;
+  align-items:center;
+  gap:7px;
+  font-size:11px;
+  font-weight:700;
+  white-space:nowrap;
+}
+
+.device-switcher{
+  display:flex;
+  gap:2px;
+  overflow:auto;
+}
+
+.device-btn{
+  height:28px;
+  padding:0 8px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#6e7884;
+  font-size:9px;
+  white-space:nowrap;
+}
+
+.device-btn:hover{
+  color:#fff;
+}
+
+.device-btn.active{
+  color:#fff;
+  background:#191f25;
+  box-shadow:inset 0 0 0 1px var(--border2);
+}
+
+.preview-actions{
+  margin-left:auto;
+  display:flex;
+  gap:3px;
+}
+
+.preview-actions button{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#77818c;
+}
+
+.preview-actions button:hover{
+  color:#fff;
+  background:#171c22;
+}
+
+.preview-area{
+  flex:1;
+  min-height:0;
+  padding:16px;
+  overflow:auto;
+  display:flex;
+  justify-content:center;
+  align-items:flex-start;
+  background:
+    radial-gradient(circle at center,rgba(255,255,255,.025),transparent 65%),
+    #080a0d;
+}
+
+.device-frame{
+  width:100%;
+  height:100%;
+  min-height:300px;
+  overflow:hidden;
+  border:1px solid #303943;
+  border-radius:9px;
+  background:#fff;
+  box-shadow:var(--shadow);
+  transition:.25s;
+}
+
+.device-frame.laptop{
+  width:92%;
+}
+
+.device-frame.tablet{
+  width:72%;
+}
+
+.device-frame.desktop{
+  width:100%;
+}
+
+.preview-iframe{
+  width:100%;
+  height:100%;
+  display:block;
+  border:0;
+  background:#fff;
+}
+
+
+/* =========================================================
+   AI PANEL
+========================================================= */
+
+.ai-panel{
+  position:fixed;
+  top:64px;
+  right:0;
+  bottom:0;
+  width:350px;
+  display:flex;
+  flex-direction:column;
+  background:#0c0f13;
+  border-left:1px solid var(--border);
+  box-shadow:-25px 0 70px rgba(0,0,0,.48);
+  transform:translateX(100%);
+  transition:.28s ease;
+  z-index:400;
+}
+
+.ai-panel.open{
+  transform:translateX(0);
+}
+
+.ai-head{
+  height:47px;
+  min-height:47px;
+  padding:0 10px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+}
+
+.ai-brand{
+  display:flex;
+  align-items:center;
+  gap:8px;
+}
+
+.ai-logo{
+  width:27px;
+  height:27px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:7px;
+  background:rgba(255,118,36,.11);
+  color:var(--orange);
+}
+
+.ai-brand strong{
+  display:block;
+  font-size:11px;
+}
+
+.ai-brand small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8px;
+}
+
+.ai-close{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#707b86;
+}
+
+.ai-close:hover{
+  color:#fff;
+  background:#181e24;
+}
+
+.ai-model{
+  height:43px;
+  min-height:43px;
+  padding:0 9px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  color:#77818c;
+  font-size:9px;
+}
+
+.ai-model select{
+  width:125px;
+  height:28px;
+  padding:0 7px;
+  border:1px solid var(--border2);
+  border-radius:6px;
+  outline:none;
+  background:#151a20;
+  color:#bac2cb;
+  font-size:9px;
+}
+
+.ai-actions{
+  padding:9px;
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:5px;
+  border-bottom:1px solid var(--border);
+}
+
+.ai-action{
+  height:33px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:6px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:#12161b;
+  color:#8b96a1;
+  font-size:9px;
+}
+
+.ai-action:hover{
+  color:#fff;
+  background:rgba(255,118,36,.08);
+  border-color:rgba(255,118,36,.35);
+  box-shadow:0 8px 25px rgba(0,0,0,.25);
+}
+
+.ai-chat{
+  flex:1;
+  min-height:0;
+  padding:13px;
+  overflow:auto;
+}
+
+.ai-welcome{
+  margin-top:35px;
+  text-align:center;
+  color:#75808b;
+}
+
+.ai-welcome-icon{
+  width:43px;
+  height:43px;
+  margin:auto;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:12px;
+  background:rgba(255,118,36,.09);
+  color:var(--orange);
+}
+
+.ai-welcome h3{
+  margin:12px 0 5px;
+  font-size:12px;
+  color:#dce2e8;
+}
+
+.ai-welcome p{
+  max-width:230px;
+  margin:auto;
+  font-size:9px;
+  line-height:1.6;
+}
+
+.chat-message{
+  display:flex;
+  margin-bottom:10px;
+}
+
+.chat-message.user{
+  justify-content:flex-end;
+}
+
+.chat-bubble{
+  max-width:88%;
+  padding:9px 11px;
+  border-radius:9px;
+  font-size:10px;
+  line-height:1.55;
+  white-space:pre-wrap;
+}
+
+.chat-message.ai .chat-bubble{
+  background:#151a20;
+  border:1px solid var(--border);
+  color:#c5cdd6;
+}
+
+.chat-message.user .chat-bubble{
+  background:rgba(255,118,36,.13);
+  border:1px solid rgba(255,118,36,.18);
+  color:#fff;
+}
+
+.ai-input{
+  padding:9px;
+  border-top:1px solid var(--border);
+  background:#0d1014;
+}
+
+#aiInput{
+  width:100%;
+  min-height:68px;
+  max-height:140px;
+  padding:10px;
+  resize:vertical;
+  outline:none;
+  border:1px solid var(--border2);
+  border-radius:8px;
+  background:#090c0f;
+  color:#fff;
+  font-size:10px;
+}
+
+#aiInput:focus{
+  border-color:rgba(255,118,36,.45);
+  box-shadow:0 0 0 3px rgba(255,118,36,.05);
+}
+
+.ai-send-row{
+  margin-top:6px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  color:#56616c;
+  font-size:8px;
+}
+
+.ai-send{
+  width:29px;
+  height:29px;
+  border:0;
+  border-radius:7px;
+  background:var(--orange);
+  color:#fff;
+}
+
+
+/* =========================================================
+   PROJECTS PAGE
+========================================================= */
+
+.projects-page{
+  background:#090c0f;
+}
+
+.projects-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fill,minmax(240px,1fr));
+  gap:12px;
+}
+
+.project-card{
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:#0e1216;
+  box-shadow:0 12px 35px rgba(0,0,0,.18);
+  transition:.2s;
+}
+
+.project-card:hover{
+  transform:translateY(-2px);
+  border-color:#343e49;
+  box-shadow:0 20px 50px rgba(0,0,0,.3);
+}
+
+.project-card-top{
+  display:flex;
+  align-items:flex-start;
+  justify-content:space-between;
+  gap:10px;
+}
+
+.project-card-icon{
+  width:37px;
+  height:37px;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  border-radius:9px;
+  background:rgba(255,118,36,.09);
+  color:var(--orange);
+}
+
+.project-card h3{
+  margin:12px 0 5px;
+  font-size:13px;
+}
+
+.project-card p{
+  margin:0;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.project-card-meta{
+  display:flex;
+  gap:12px;
+  margin-top:12px;
+  color:#606b76;
+  font-size:8px;
+}
+
+.project-card-actions{
+  display:flex;
+  gap:5px;
+  margin-top:14px;
+}
+
+.project-card-actions button{
+  flex:1;
+  height:31px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:#151a20;
+  color:#aab3bd;
+  font-size:9px;
+}
+
+.project-card-actions button:hover{
+  color:#fff;
+}
+
+.project-card-actions .delete{
+  color:#ff6575;
+}
+
+
+/* =========================================================
+   DASHBOARD
+========================================================= */
+
+.dashboard-grid{
+  display:grid;
+  grid-template-columns:repeat(4,1fr);
+  gap:12px;
+  margin-bottom:15px;
+}
+
+.stat-card{
+  padding:15px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#0e1216;
+}
+
+.stat-card small{
+  color:var(--muted);
+  font-size:9px;
+}
+
+.stat-card strong{
+  display:block;
+  margin-top:7px;
+  font-size:22px;
+}
+
+.dashboard-columns{
+  display:grid;
+  grid-template-columns:1.2fr .8fr;
+  gap:12px;
+}
+
+.dashboard-box{
+  padding:16px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  background:#0e1216;
+}
+
+.dashboard-box h3{
+  margin:0 0 14px;
+  font-size:12px;
+}
+
+.admin-row{
+  padding:11px 0;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:10px;
+  border-bottom:1px solid var(--border);
+}
+
+.admin-row:last-child{
+  border-bottom:0;
+}
+
+.admin-user{
+  display:flex;
+  align-items:center;
+  gap:9px;
+}
+
+.admin-user img{
+  width:30px;
+  height:30px;
+  border-radius:50%;
+  object-fit:cover;
+  background:#202731;
+}
+
+.admin-user strong{
+  display:block;
+  font-size:10px;
+}
+
+.admin-user small{
+  display:block;
+  margin-top:2px;
+  color:var(--muted);
+  font-size:8px;
+}
+
+.role-badge{
+  padding:4px 7px;
+  border-radius:5px;
+  background:rgba(255,118,36,.1);
+  color:var(--orange2);
+  font-size:8px;
+}
+
+
+/* =========================================================
+   PROFILE / SETTINGS
+========================================================= */
+
+.settings-grid{
+  display:grid;
+  grid-template-columns:repeat(2,minmax(0,1fr));
+  gap:13px;
+}
+
+.settings-card{
+  padding:18px;
+  border:1px solid var(--border);
+  border-radius:11px;
+  background:#0e1216;
+}
+
+.settings-card h3{
+  margin:0 0 5px;
+  font-size:12px;
+}
+
+.settings-card p{
+  margin:0 0 16px;
+  color:var(--muted);
+  font-size:9px;
+}
+
+.form-group{
+  margin-bottom:12px;
+}
+
+.form-group label{
+  display:block;
+  margin-bottom:6px;
+  color:#8c97a2;
+  font-size:9px;
+}
+
+.form-input{
+  width:100%;
+  height:37px;
+  padding:0 10px;
+  border:1px solid var(--border2);
+  border-radius:7px;
+  outline:none;
+  background:#090c0f;
+  color:#fff;
+  font-size:10px;
+}
+
+.form-input:focus{
+  border-color:rgba(255,118,36,.45);
+}
+
+.profile-preview{
+  display:flex;
+  align-items:center;
+  gap:12px;
+  margin-bottom:16px;
+}
+
+.profile-preview img{
+  width:60px;
+  height:60px;
+  border-radius:50%;
+  object-fit:cover;
+  border:1px solid var(--border2);
+  background:#202731;
+}
+
+.upload-btn{
+  height:32px;
+  padding:0 10px;
+  border:1px solid var(--border);
+  border-radius:6px;
+  background:#151a20;
+  color:#b7c0ca;
+  font-size:9px;
+}
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+.admin-only{
+  display:none;
+}
+
+.admin-form{
+  display:flex;
+  gap:7px;
+  margin-bottom:12px;
+}
+
+.admin-form input{
+  flex:1;
+}
+
+.admin-form button{
+  width:90px;
+}
+
+.remove-admin{
+  width:28px;
+  height:28px;
+  border:1px solid rgba(255,82,99,.2);
+  border-radius:6px;
+  background:rgba(255,82,99,.06);
+  color:#ff6575;
+}
+
+
+/* =========================================================
+   MOBILE PREVIEW PAGE
+========================================================= */
+
+.mobile-preview-page{
+  background:#080a0d;
+}
+
+.mobile-preview-layout{
+  min-height:100%;
+  display:flex;
+  flex-direction:column;
+}
+
+.mobile-preview-toolbar{
+  height:55px;
+  min-height:55px;
+  padding:0 15px;
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  border-bottom:1px solid var(--border);
+  background:#0d1014;
+}
+
+.mobile-device{
+  width:340px;
+  max-width:82vw;
+  height:620px;
+  max-height:calc(100vh - 120px);
+  margin:auto;
+  overflow:hidden;
+  border:8px solid #20262d;
+  border-radius:28px;
+  background:#fff;
+  box-shadow:0 30px 100px rgba(0,0,0,.6);
+}
+
+.mobile-device iframe{
+  width:100%;
+  height:100%;
+  border:0;
+  background:#fff;
+}
+
+
+/* =========================================================
+   MODALS
+========================================================= */
+
+.overlay{
+  position:fixed;
+  inset:0;
+  z-index:2000;
+  display:none;
+  align-items:center;
+  justify-content:center;
+  padding:15px;
+  background:rgba(0,0,0,.68);
+  backdrop-filter:blur(8px);
+}
+
+.overlay.show{
+  display:flex;
+}
+
+.modal{
+  width:min(500px,100%);
+  max-height:90vh;
+  overflow:auto;
+  padding:17px;
+  border:1px solid var(--border2);
+  border-radius:12px;
+  background:#11151a;
+  box-shadow:0 40px 100px rgba(0,0,0,.6);
+}
+
+.modal-head{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  margin-bottom:14px;
+}
+
+.modal-head strong{
+  font-size:12px;
+}
+
+.close-modal{
+  width:28px;
+  height:28px;
+  border:0;
+  border-radius:6px;
+  background:transparent;
+  color:#74808c;
+}
+
+.close-modal:hover{
+  color:#fff;
+  background:#191f25;
+}
+
+.modal-input{
+  width:100%;
+  height:38px;
+  padding:0 11px;
+  border:1px solid var(--border2);
+  border-radius:7px;
+  outline:none;
+  background:#090c0f;
+  color:#fff;
+  font-size:10px;
+}
+
+.modal-input:focus{
+  border-color:rgba(255,118,36,.45);
+}
+
+.modal-primary{
+  width:100%;
+  height:38px;
+  margin-top:9px;
+  border:0;
+  border-radius:7px;
+  background:var(--orange);
+  color:#fff;
+  font-weight:700;
+  font-size:10px;
+}
+
+.search-item{
+  margin-top:8px;
+  padding:10px;
+  border:1px solid var(--border);
+  border-radius:7px;
+  background:#0d1115;
+  cursor:pointer;
+}
+
+.search-item:hover{
+  background:#151a20;
+}
+
+.search-item strong{
+  display:block;
+  font-size:10px;
+}
+
+.search-item span{
+  color:var(--muted);
+  font-size:8px;
+}
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+.toast{
+  position:fixed;
+  right:20px;
+  bottom:20px;
+  z-index:3000;
+  max-width:300px;
+  padding:11px 14px;
+  border:1px solid var(--border2);
+  border-radius:8px;
+  background:#151a20;
+  color:#fff;
+  box-shadow:0 20px 60px rgba(0,0,0,.45);
+  font-size:10px;
+  transform:translateY(20px);
+  opacity:0;
+  pointer-events:none;
+  transition:.2s;
+}
+
+.toast.show{
+  opacity:1;
+  transform:translateY(0);
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:1050px){
+
+  .workspace-layout{
+    grid-template-columns:55% 45%;
+  }
+
+  .device-btn{
+    padding:0 6px;
+  }
+
+  .device-btn span{
+    display:none;
+  }
+
+  .dashboard-grid{
+    grid-template-columns:repeat(2,1fr);
+  }
+
+  .dashboard-columns{
+    grid-template-columns:1fr;
+  }
+
+}
+
+
+@media(max-width:800px){
+
+  .sidebar{
+    width:62px;
+    min-width:62px;
+  }
+
+  .brand{
+    justify-content:center;
+    padding:0;
+  }
+
+  .brand-name,
+  .brand-version,
+  .nav-label,
+  .nav-btn span:not(.nav-icon),
+  .project-mini div:last-child,
+  .user-card>div:last-child,
+  .copyright{
+    display:none;
+  }
+
+  .nav-btn{
+    justify-content:center;
+    padding:0;
+  }
+
+  .project-mini{
+    justify-content:center;
+  }
+
+  .sidebar-user{
+    padding:12px 14px;
+  }
+
+  .user-avatar{
+    margin:auto;
+  }
+
+  .workspace-layout{
+    display:flex;
+    flex-direction:column;
+    overflow:auto;
+  }
+
+  .editor-panel{
+    height:55vh;
+    min-height:430px;
+    flex:none;
+    border-right:0;
+    border-bottom:1px solid var(--border);
+  }
+
+  .preview-panel{
+    height:45vh;
+    min-height:330px;
+    flex:none;
+    order:2;
+  }
+
+  .page-inner{
+    padding:18px;
+  }
+
+  .settings-grid{
+    grid-template-columns:1fr;
+  }
+
+  .mobile-device{
+    width:290px;
+    height:560px;
+  }
+
+}
+
+
+@media(max-width:600px){
+
+  .topbar{
+    padding:0 9px;
+  }
+
+  .top-project-name{
+    max-width:145px;
+  }
+
+  .status-text{
+    display:none;
+  }
+
+  .top-btn{
+    padding:0 9px;
+  }
+
+  .top-btn span{
+    display:none;
+  }
+
+  .run-button{
+    padding:0 11px;
+  }
+
+  .page-heading{
+    align-items:flex-start;
+    flex-direction:column;
+  }
+
+  .heading-actions{
+    width:100%;
+  }
+
+  .heading-actions .action-btn{
+    flex:1;
+    justify-content:center;
+  }
+
+  .projects-grid{
+    grid-template-columns:1fr;
+  }
+
+  .dashboard-grid{
+    grid-template-columns:1fr 1fr;
+  }
+
+  .ai-panel{
+    width:calc(100vw - 62px);
+  }
+
+  .preview-area{
+    padding:10px;
+  }
+
+  .device-frame.mobile{
+    width:76%;
+  }
+
+  .mobile-preview-toolbar{
+    padding:0 9px;
+  }
+
+  .mobile-device{
+    width:270px;
+    height:520px;
+    border-width:7px;
+  }
+
+}
+
+
+@media(max-width:430px){
+
+  .sidebar{
+    width:52px;
+    min-width:52px;
+  }
+
+  .main{
+    width:calc(100% - 52px);
+  }
+
+  .ai-panel{
+    width:calc(100vw - 52px);
+  }
+
+  .editor-panel{
+    min-height:400px;
+  }
+
+  .preview-panel{
+    min-height:300px;
+  }
+
+  .device-btn{
+    padding:0 5px;
+    font-size:8px;
+  }
+
+  .preview-title{
+    display:none;
+  }
+
+  .dashboard-grid{
+    grid-template-columns:1fr;
+  }
+
+  .page-inner{
+    padding:13px;
+  }
+
+}
+</style>
+</head>
+
+
+<body>
+
+<div class="app">
+
+
+<!-- ======================================================
+     SIDEBAR
+======================================================= -->
+
+<aside class="sidebar">
+
+  <div class="brand">
+
+    <div class="brand-logo">
+      FC
+    </div>
+
+    <div class="brand-name">
+      ForgeCode
+    </div>
+
+    <div class="brand-version">
+      v2.0
+    </div>
+
+  </div>
+
+
+  <div class="sidebar-scroll">
+
+    <div class="nav-label">
+      WORKSPACE
+    </div>
+
+    <button class="nav-btn active" data-page="workspace">
+      <span class="nav-icon">⌘</span>
+      <span>Editor</span>
+    </button>
+
+    <button class="nav-btn" data-page="projects">
+      <span class="nav-icon">▣</span>
+      <span>Projects</span>
+    </button>
+
+    <button class="nav-btn" data-page="ai-system">
+      <span class="nav-icon">✦</span>
+      <span>AI System</span>
+    </button>
+
+    <button class="nav-btn" data-page="settings">
+      <span class="nav-icon">⚙</span>
+      <span>Settings</span>
+    </button>
+
+
+    <br>
+
+
+    <div class="nav-label">
+      CURRENT PROJECT
+    </div>
+
+    <div class="project-mini">
+
+      <div class="project-dot"></div>
+
+      <div>
+        <strong id="sidebarProjectName">
+          Your Project
+        </strong>
+
+        <small>
+          Active Project
+        </small>
+      </div>
+
+    </div>
+
+
+    <div class="nav-label">
+      TOOLS
+    </div>
+
+    <button class="nav-btn" id="newFileBtn">
+      <span class="nav-icon">＋</span>
+      <span>New File</span>
+    </button>
+
+    <button class="nav-btn" id="runProjectBtn">
+      <span class="nav-icon">▶</span>
+      <span>Run Project</span>
+    </button>
+
+    <button class="nav-btn" id="forgeAIButton">
+      <span class="nav-icon">✦</span>
+      <span>ForgeAI Chat</span>
+    </button>
+
+    <button class="nav-btn" id="searchFilesBtn">
+      <span class="nav-icon">⌕</span>
+      <span>Search Files</span>
+    </button>
+
+    <button class="nav-btn" id="mobilePreviewBtn">
+      <span class="nav-icon">▯</span>
+      <span>Mobile Preview</span>
+    </button>
+
+
+    <div class="admin-only" id="adminNavigation">
+
+      <br>
+
+      <div class="nav-label">
+        OWNER
+      </div>
+
+      <button class="nav-btn" data-page="admin">
+        <span class="nav-icon">♛</span>
+        <span>Admin Dashboard</span>
+      </button>
+
+    </div>
+
+  </div>
+
+
+  <div class="sidebar-user">
+
+    <div class="user-card">
+
+      <img
+        class="user-avatar"
+        id="sidebarAvatar"
+        alt="Profile"
+      >
+
+      <div>
+
+        <strong id="sidebarUserName">
+          Forge Developer
+        </strong>
+
+        <small id="sidebarRole">
+          Owner / Admin
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <div class="copyright">
+      © 2026 ForgeCode by BROKEN... and NiharXD
+    </div>
+
+  </div>
+
+</aside>
+
+
+<!-- ======================================================
+     MAIN
+======================================================= -->
+
+<main class="main">
+
+
+<!-- TOPBAR -->
+
+<header class="topbar">
+
+  <div class="top-project">
+
+    <div class="top-project-icon">
+      ◈
+    </div>
+
+    <div class="top-project-info">
+
+      <strong
+        class="top-project-name"
+        id="topProjectName"
+      >
+        My Awesome Project
+      </strong>
+
+      <div class="save-state">
+
+        <span class="save-dot"></span>
+
+        <span id="saveStatus">
+          Saved
+        </span>
+
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <div class="top-actions">
+
+    <span
+      class="status-text"
+      id="saveText"
+    >
+      Saved
+    </span>
+
+    <button
+      class="top-btn"
+      id="backButton"
+      title="Back"
+    >
+      ←
+      <span>Back</span>
+    </button>
+
+    <button
+      class="top-btn"
+      id="renameProject"
+      title="Rename project"
+    >
+      ✎
+      <span>Rename</span>
+    </button>
+
+    <button
+      class="top-btn"
+      id="downloadProject"
+      title="Download complete project"
+    >
+      ↓
+      <span>Download</span>
+    </button>
+
+    <button
+      class="top-btn"
+      id="saveProject"
+    >
+      💾
+      <span>Save</span>
+    </button>
+
+    <button
+      class="top-btn primary"
+      id="runButton"
+    >
+      ▶
+      <span>Run</span>
+    </button>
+
+  </div>
+
+</header>
+
+
+<!-- ======================================================
+     WORKSPACE PAGE
+======================================================= -->
+
+<section
+  class="page active workspace-page"
+  id="page-workspace"
+>
+
+
+  <div class="workspace-layout">
+
+
+    <!-- EDITOR LEFT -->
+
+    <section class="editor-panel">
+
+      <div class="editor-tabs">
+
+        <div
+          class="file-tabs"
+          id="fileTabs"
+        >
+
+        </div>
+
+
+        <button
+          class="editor-settings-btn"
+          id="editorSettings"
+          title="Editor settings"
+        >
+          ⚙
+        </button>
+
+      </div>
+
+
+      <div class="editor-main">
+
+        <div
+          class="line-numbers"
+          id="lineNumbers"
+        ></div>
+
+
+        <div class="code-wrap">
+
+          <pre id="highlight"></pre>
+
+          <textarea
+            id="codeEditor"
+            spellcheck="false"
+            autocomplete="off"
+            autocorrect="off"
+            autocapitalize="off"
+          ></textarea>
+
+        </div>
+
+      </div>
+
+
+      <div class="editor-status">
+
+        <span>
+          ✓ No errors
+        </span>
+
+        <span id="cursorPosition">
+          Ln 1, Col 1
+        </span>
+
+        <span>
+          UTF-8
+        </span>
+
+        <span id="languageStatus">
+          HTML
+        </span>
+
+      </div>
+
+    </section>
+
+
+    <!-- PREVIEW RIGHT -->
+
+    <section class="preview-panel">
+
+      <div class="preview-head">
+
+        <div class="preview-title">
+          ◉ Live Preview
+        </div>
+
+
+        <div class="device-switcher">
+
+          <button
+            class="device-btn active"
+            data-device="desktop"
+          >
+            🖥 Desktop
+          </button>
+
+          <button
+            class="device-btn"
+            data-device="laptop"
+          >
+            💻 Laptop
+          </button>
+
+          <button
+            class="device-btn"
+            data-device="tablet"
+          >
+            ▣ Tablet
+          </button>
+
+          <button
+            class="device-btn"
+            id="mobilePreviewTop"
+          >
+            📱 Mobile
+          </button>
+
+        </div>
+
+
+        <div class="preview-actions">
+
+          <button
+            id="previewSettings"
+            title="Preview settings"
+          >
+            ⚙
+          </button>
+
+          <button
+            id="refreshPreview"
+            title="Refresh"
+          >
+            ↻
+          </button>
+
+          <button
+            id="openPreviewNew"
+            title="Open preview"
+          >
+            ↗
+          </button>
+
+        </div>
+
+      </div>
+
+
+      <div class="preview-area">
+
+        <div
+          class="device-frame desktop"
+          id="deviceFrame"
+        >
+
+          <iframe
+            class="preview-iframe"
+            id="previewFrame"
+            title="ForgeCode Preview"
+          ></iframe>
+
+        </div>
+
+      </div>
+
+    </section>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     PROJECTS PAGE
+======================================================= -->
+
+<section
+  class="page projects-page"
+  id="page-projects"
+>
+
+  <div class="page-inner">
+
+    <div class="page-heading">
+
+      <div>
+
+        <h1>
+          Projects
+        </h1>
+
+        <p>
+          Create, edit, rename, download and manage your projects.
+        </p>
+
+      </div>
+
+
+      <div class="heading-actions">
+
+        <button
+          class="action-btn"
+          id="projectsBack"
+        >
+          ← Back
+        </button>
+
+        <button
+          class="action-btn orange"
+          id="createProjectBtn"
+        >
+          ＋ New Project
+        </button>
+
+      </div>
+
+    </div>
+
+
+    <div
+      class="projects-grid"
+      id="projectsGrid"
+    ></div>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     AI SYSTEM PAGE
+======================================================= -->
+
+<section
+  class="page"
+  id="page-ai-system"
+>
+
+  <div class="page-inner">
+
+    <div class="page-heading">
+
+      <div>
+
+        <h1>
+          ForgeAI System
+        </h1>
+
+        <p>
+          Your built-in coding assistant.
+        </p>
+
+      </div>
+
+
+      <button
+        class="action-btn"
+        id="aiPageBack"
+      >
+        ← Back
+      </button>
+
+    </div>
+
+
+    <div class="dashboard-columns">
+
+      <div class="dashboard-box">
+
+        <h3>
+          AI Tools
+        </h3>
+
+        <button
+          class="action-btn"
+          data-ai-page="Explain"
+        >
+          📖 Explain Code
+        </button>
+
+        <br><br>
+
+        <button
+          class="action-btn"
+          data-ai-page="Find Bugs"
+        >
+          🐞 Find Bugs
+        </button>
+
+        <br><br>
+
+        <button
+          class="action-btn"
+          data-ai-page="Improve"
+        >
+          ✨ Improve Code
+        </button>
+
+        <br><br>
+
+        <button
+          class="action-btn"
+          data-ai-page="Refactor"
+        >
+          ♻ Refactor
+        </button>
+
+      </div>
+
+
+      <div class="dashboard-box">
+
+        <h3>
+          ForgeAI
+        </h3>
+
+        <p>
+          Open the assistant from any page and ask questions about the current project.
+        </p>
+
+        <button
+          class="action-btn orange"
+          id="openAIFromPage"
+        >
+          ✦ Open ForgeAI
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     SETTINGS PAGE
+======================================================= -->
+
+<section
+  class="page"
+  id="page-settings"
+>
+
+  <div class="page-inner">
+
+    <div class="page-heading">
+
+      <div>
+
+        <h1>
+          Settings
+        </h1>
+
+        <p>
+          Manage your ForgeCode profile and workspace.
+        </p>
+
+      </div>
+
+
+      <button
+        class="action-btn"
+        id="settingsBack"
+      >
+        ← Back
+      </button>
+
+    </div>
+
+
+    <div class="settings-grid">
+
+
+      <!-- PROFILE -->
+
+      <div class="settings-card">
+
+        <h3>
+          Profile
+        </h3>
+
+        <p>
+          Change your display name and profile picture.
+        </p>
+
+
+        <div class="profile-preview">
+
+          <img
+            id="profilePreview"
+            alt="Profile"
+          >
+
+          <div>
+
+            <button
+              class="upload-btn"
+              id="uploadPhotoBtn"
+            >
+              Change picture
+            </button>
+
+            <input
+              type="file"
+              id="profileUpload"
+              accept="image/*"
+              hidden
+            >
+
+          </div>
+
+        </div>
+
+
+        <div class="form-group">
+
+          <label>
+            Display name
+          </label>
+
+          <input
+            class="form-input"
+            id="profileName"
+            value="Forge Developer"
+          >
+
+        </div>
+
+
+        <button
+          class="action-btn orange"
+          id="saveProfile"
+        >
+          Save Profile
+        </button>
+
+      </div>
+
+
+      <!-- WORKSPACE -->
+
+      <div class="settings-card">
+
+        <h3>
+          Workspace
+        </h3>
+
+        <p>
+          Configure the editor experience.
+        </p>
+
+
+        <div class="form-group">
+
+          <label>
+            Editor font size
+          </label>
+
+          <select
+            class="form-input"
+            id="fontSize"
+          >
+            <option value="11">11px</option>
+            <option value="12" selected>12px</option>
+            <option value="13">13px</option>
+            <option value="14">14px</option>
+            <option value="15">15px</option>
+            <option value="16">16px</option>
+          </select>
+
+        </div>
+
+
+        <button
+          class="action-btn"
+          id="resetWorkspace"
+        >
+          Reset Workspace
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     ADMIN DASHBOARD
+======================================================= -->
+
+<section
+  class="page"
+  id="page-admin"
+>
+
+  <div class="page-inner">
+
+    <div class="page-heading">
+
+      <div>
+
+        <h1>
+          Owner Dashboard
+        </h1>
+
+        <p>
+          Private administration area. Only the owner can access this page.
+        </p>
+
+      </div>
+
+
+      <button
+        class="action-btn"
+        id="adminBack"
+      >
+        ← Back
+      </button>
+
+    </div>
+
+
+    <div class="dashboard-grid">
+
+      <div class="stat-card">
+        <small>Total Projects</small>
+        <strong id="statProjects">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Total Files</small>
+        <strong id="statFiles">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Administrators</small>
+        <strong id="statAdmins">0</strong>
+      </div>
+
+      <div class="stat-card">
+        <small>Workspace Role</small>
+        <strong>Owner</strong>
+      </div>
+
+    </div>
+
+
+    <div class="dashboard-columns">
+
+
+      <div class="dashboard-box">
+
+        <h3>
+          Administrator Management
+        </h3>
+
+        <p>
+          Add administrators who can access the administration area.
+        </p>
+
+
+        <div class="admin-form">
+
+          <input
+            class="form-input"
+            id="adminNameInput"
+            placeholder="Administrator name"
+          >
+
+          <button
+            class="action-btn orange"
+            id="addAdmin"
+          >
+            Add
+          </button>
+
+        </div>
+
+
+        <div id="adminList"></div>
+
+      </div>
+
+
+      <div class="dashboard-box">
+
+        <h3>
+          Owner Controls
+        </h3>
+
+        <p>
+          These controls are visible only to the owner.
+        </p>
+
+
+        <button
+          class="action-btn"
+          id="exportData"
+        >
+          ↓ Export Workspace Data
+        </button>
+
+        <br><br>
+
+        <button
+          class="action-btn danger"
+          id="clearWorkspace"
+        >
+          ⚠ Clear Local Workspace
+        </button>
+
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+<!-- ======================================================
+     MOBILE PREVIEW PAGE
+======================================================= -->
+
+<section
+  class="page mobile-preview-page"
+  id="page-mobile-preview"
+>
+
+  <div class="mobile-preview-layout">
+
+    <div class="mobile-preview-toolbar">
+
+      <button
+        class="action-btn"
+        id="mobileBack"
+      >
+        ← Back
+      </button>
+
+      <strong>
+        Mobile Preview
+      </strong>
+
+      <button
+        class="action-btn"
+        id="mobileRefresh"
+      >
+        ↻ Refresh
+      </button>
+
+    </div>
+
+
+    <div class="mobile-device">
+
+      <iframe
+        id="mobileFrame"
+        title="Mobile Preview"
+      ></iframe>
+
+    </div>
+
+  </div>
+
+</section>
+
+
+</main>
+
+
+<!-- ======================================================
+     AI PANEL
+======================================================= -->
+
+<aside
+  class="ai-panel"
+  id="aiPanel"
+>
+
+  <div class="ai-head">
+
+    <div class="ai-brand">
+
+      <div class="ai-logo">
+        ✦
+      </div>
+
+      <div>
+
+        <strong>
+          ForgeAI
+        </strong>
+
+        <small>
+          Code Assistant
+        </small>
+
+      </div>
+
+    </div>
+
+
+    <button
+      class="ai-close"
+      id="closeAI"
+    >
+      ×
+    </button>
+
+  </div>
+
+
+  <div class="ai-model">
+
+    <span>
+      ● AI Model
+    </span>
+
+    <select>
+      <option>ForgeAI</option>
+      <option>ForgeAI Pro</option>
+      <option>Code Expert</option>
+    </select>
+
+  </div>
+
+
+  <div class="ai-actions">
+
+    <button class="ai-action" data-ai="Explain">
+      📖 Explain
+    </button>
+
+    <button class="ai-action" data-ai="Find Bugs">
+      🐞 Find Bugs
+    </button>
+
+    <button class="ai-action" data-ai="Improve">
+      ✨ Improve
+    </button>
+
+    <button class="ai-action" data-ai="Refactor">
+      ♻ Refactor
+    </button>
+
+    <button class="ai-action" data-ai="Generate">
+      ✦ Generate
+    </button>
+
+    <button class="ai-action" data-ai="Comments">
+      💬 Comments
+    </button>
+
+  </div>
+
+
+  <div
+    class="ai-chat"
+    id="aiChat"
+  >
+
+    <div class="ai-welcome">
+
+      <div class="ai-welcome-icon">
+        ✦
+      </div>
+
+      <h3>
+        How can I help?
+      </h3>
+
+      <p>
+        Ask ForgeAI to explain, debug, improve or generate code.
+      </p>
+
+    </div>
+
+  </div>
+
+
+  <div class="ai-input">
+
+    <textarea
+      id="aiInput"
+      placeholder="Ask ForgeAI about your code..."
+    ></textarea>
+
+
+    <div class="ai-send-row">
+
+      <span>
+        Ctrl + Enter
+      </span>
+
+      <button
+        class="ai-send"
+        id="sendAI"
+      >
+        ↑
+      </button>
+
+    </div>
+
+  </div>
+
+</aside>
+
+
+<!-- ======================================================
+     NEW FILE MODAL
+======================================================= -->
+
+<div
+  class="overlay"
+  id="newFileModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <strong>
+        ＋ New File
+      </strong>
+
+      <button class="close-modal">
+        ×
+      </button>
+
+    </div>
+
+
+    <input
+      class="modal-input"
+      id="newFileName"
+      placeholder="example.js"
+    >
+
+
+    <button
+      class="modal-primary"
+      id="createFile"
+    >
+      Create File
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================================
+     NEW PROJECT MODAL
+======================================================= -->
+
+<div
+  class="overlay"
+  id="newProjectModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <strong>
+        ＋ Create Project
+      </strong>
+
+      <button class="close-modal">
+        ×
+      </button>
+
+    </div>
+
+
+    <input
+      class="modal-input"
+      id="newProjectName"
+      placeholder="My New Project"
+    >
+
+
+    <button
+      class="modal-primary"
+      id="createProject"
+    >
+      Create Project
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================================
+     SEARCH MODAL
+======================================================= -->
+
+<div
+  class="overlay"
+  id="searchModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <strong>
+        🔎 Search Files
+      </strong>
+
+      <button class="close-modal">
+        ×
+      </button>
+
+    </div>
+
+
+    <input
+      class="modal-input"
+      id="searchInput"
+      placeholder="Search files or code..."
+    >
+
+
+    <div id="searchResults"></div>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================================
+     RENAME MODAL
+======================================================= -->
+
+<div
+  class="overlay"
+  id="renameModal"
+>
+
+  <div class="modal">
+
+    <div class="modal-head">
+
+      <strong>
+        ✎ Rename Project
+      </strong>
+
+      <button class="close-modal">
+        ×
+      </button>
+
+    </div>
+
+
+    <input
+      class="modal-input"
+      id="renameInput"
+    >
+
+
+    <button
+      class="modal-primary"
+      id="confirmRename"
+    >
+      Rename Project
+    </button>
+
+  </div>
+
+</div>
+
+
+<!-- ======================================================
+     TOAST
+======================================================= -->
+
+<div
+  class="toast"
+  id="toast"
+>
+  Done
+</div>
+
+
+<script>
+(function(){
+
+"use strict";
+
+
+/* =========================================================
+   DEFAULT DATA
+========================================================= */
+
+const DEFAULT_FILES = {
+
+"index.html":
+`<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>My Website</title>
+</head>
+<body>
+
+<div class="hero">
+
+<h1>Welcome to ForgeCode</h1>
+
+<p>Edit the code and press Run.</p>
+
+<button onclick="hello()">
+Click Me
+</button>
+
+</div>
+
+</body>
+</html>`,
+
+"style.css":
+`*{
+box-sizing:border-box;
+}
+
+body{
+margin:0;
+min-height:100vh;
+font-family:Arial,sans-serif;
+background:#0b0d10;
+color:#fff;
+}
+
+.hero{
+min-height:100vh;
+display:flex;
+flex-direction:column;
+align-items:center;
+justify-content:center;
+text-align:center;
+padding:30px;
+}
+
+h1{
+font-size:clamp(35px,6vw,70px);
+margin:0 0 15px;
+}
+
+p{
+color:#8b95a1;
+}
+
+button{
+margin-top:20px;
+padding:12px 22px;
+border:0;
+border-radius:8px;
+background:#ff7624;
+color:white;
+cursor:pointer;
+}`,
+
+"script.js":
+`function hello(){
+
+alert("ForgeCode is working!");
+
+}`
+
+};
+
+
+/* =========================================================
+   STORAGE
+========================================================= */
+
+const STORAGE_KEY="forgecode_v2_workspace";
+
+let storage={
+  profile:{
+    name:"Forge Developer",
+    image:""
+  },
+  role:"owner",
+  admins:[],
+  projects:[],
+  currentProject:null,
+  settings:{
+    fontSize:"12"
+  }
+};
+
+
+function saveStorage(){
+
+  localStorage.setItem(
+    STORAGE_KEY,
+    JSON.stringify(storage)
+  );
+
+}
+
+
+function loadStorage(){
+
+  try{
+
+    const saved=
+      localStorage.getItem(STORAGE_KEY);
+
+    if(saved){
+
+      const parsed=
+        JSON.parse(saved);
+
+      storage={
+        ...storage,
+        ...parsed,
+        profile:{
+          ...storage.profile,
+          ...(parsed.profile||{})
+        },
+        settings:{
+          ...storage.settings,
+          ...(parsed.settings||{})
+        }
+      };
+
+    }
+
+  }catch(error){
+
+    console.error(error);
+
+  }
+
+}
+
+
+loadStorage();
+
+
+/* =========================================================
+   INITIAL PROJECT
+========================================================= */
+
+function createProjectObject(name){
+
+  return {
+    id:"project_"+Date.now()+"_"+Math.random().toString(36).slice(2),
+    name:name||"My Awesome Project",
+    files:JSON.parse(JSON.stringify(DEFAULT_FILES)),
+    createdAt:new Date().toISOString(),
+    updatedAt:new Date().toISOString()
+  };
+
+}
+
+
+if(!Array.isArray(storage.projects) || storage.projects.length===0){
+
+  const first=
+    createProjectObject("My Awesome Project");
+
+  storage.projects=[first];
+
+  storage.currentProject=first.id;
+
+  saveStorage();
+
+}
+
+
+if(!storage.currentProject ||
+   !storage.projects.some(p=>p.id===storage.currentProject)){
+
+  storage.currentProject=
+    storage.projects[0].id;
+
+  saveStorage();
+
+}
+
+
+let currentProject=
+  storage.projects.find(
+    p=>p.id===storage.currentProject
+  );
+
+
+let currentFile="index.html";
+
+
+/* =========================================================
+   ELEMENTS
+========================================================= */
+
+const $=id=>document.getElementById(id);
+
+const editor=$("codeEditor");
+const highlight=$("highlight");
+const lineNumbers=$("lineNumbers");
+const previewFrame=$("previewFrame");
+const mobileFrame=$("mobileFrame");
+const deviceFrame=$("deviceFrame");
+const aiPanel=$("aiPanel");
+const aiChat=$("aiChat");
+const aiInput=$("aiInput");
+
+
+/* =========================================================
+   PROFILE
+========================================================= */
+
+function makeInitials(name){
+
+  const words=
+    String(name||"Forge Developer")
+      .trim()
+      .split(/\s+/);
+
+  return words
+    .slice(0,2)
+    .map(x=>x.charAt(0).toUpperCase())
+    .join("") || "FD";
+
+}
+
+
+function makeAvatarData(name){
+
+  const initials=
+    makeInitials(name);
+
+  const svg=`
+  <svg xmlns="http://www.w3.org/2000/svg" width="100" height="100">
+    <rect width="100" height="100" rx="50" fill="#202731"/>
+    <text x="50" y="56"
+      text-anchor="middle"
+      dominant-baseline="middle"
+      font-family="Arial"
+      font-size="31"
+      font-weight="700"
+      fill="#ffffff">${initials}</text>
+  </svg>`;
+
+  return "data:image/svg+xml;charset=UTF-8,"+
+    encodeURIComponent(svg);
+
+}
+
+
+function updateProfileUI(){
+
+  const name=
+    storage.profile.name ||
+    "Forge Developer";
+
+  const avatar=
+    storage.profile.image ||
+    makeAvatarData(name);
+
+  $("sidebarUserName").textContent=name;
+
+  $("profileName").value=name;
+
+  $("sidebarAvatar").src=avatar;
+
+  $("profilePreview").src=avatar;
+
+  $("sidebarRole").textContent=
+    storage.role==="owner"
+      ? "Owner / Admin"
+      : "Administrator";
+
+  updateAdminVisibility();
+
+}
+
+
+function updateAdminVisibility(){
+
+  const adminNav=
+    $("adminNavigation");
+
+  if(storage.role==="owner"){
+
+    adminNav.style.display="block";
+
+  }else{
+
+    adminNav.style.display="none";
+
+  }
+
+}
+
+
+$("uploadPhotoBtn").addEventListener(
+  "click",
+  ()=>$("profileUpload").click()
+);
+
+
+$("profileUpload").addEventListener(
+  "change",
+  event=>{
+
+    const file=
+      event.target.files[0];
+
+    if(!file)
+      return;
+
+    const reader=
+      new FileReader();
+
+    reader.onload=()=>{
+
+      storage.profile.image=
+        reader.result;
+
+      saveStorage();
+
+      updateProfileUI();
+
+      showToast("Profile picture updated");
+
+    };
+
+    reader.readAsDataURL(file);
+
+  }
+);
+
+
+$("saveProfile").addEventListener(
+  "click",
+  ()=>{
+
+    const name=
+      $("profileName").value.trim();
+
+    if(!name){
+
+      showToast("Enter a name");
+
+      return;
+
+    }
+
+    storage.profile.name=name;
+
+    saveStorage();
+
+    updateProfileUI();
+
+    showToast("Profile saved");
+
+  }
+);
+
+
+/* =========================================================
+   PROJECT
+========================================================= */
+
+function refreshCurrentProject(){
+
+  currentProject=
+    storage.projects.find(
+      p=>p.id===storage.currentProject
+    );
+
+  if(!currentProject){
+
+    currentProject=
+      storage.projects[0];
+
+    storage.currentProject=
+      currentProject.id;
+
+  }
+
+}
+
+
+function updateProjectUI(){
+
+  refreshCurrentProject();
+
+  const name=
+    currentProject.name;
+
+  $("topProjectName").textContent=name;
+
+  $("sidebarProjectName").textContent=name;
+
+}
+
+
+function projectFiles(){
+
+  return currentProject.files;
+
+}
+
+
+/* =========================================================
+   FILE TABS
+========================================================= */
+
+function renderFileTabs(){
+
+  const container=
+    $("fileTabs");
+
+  container.innerHTML="";
+
+  Object.keys(projectFiles()).forEach(
+    name=>{
+
+      const tab=
+        document.createElement("button");
+
+      tab.className=
+        "file-tab"+
+        (name===currentFile
+          ? " active"
+          : "");
+
+      tab.dataset.file=name;
+
+      tab.innerHTML=`
+        <span>◇</span>
+        <span>${escapeHTML(name)}</span>
+        <b class="file-close">×</b>
+      `;
+
+      tab.addEventListener(
+        "click",
+        event=>{
+
+          if(event.target.classList.contains("file-close")){
+
+            deleteFile(name);
+
+            return;
+
+          }
+
+          loadFile(name);
+
+        }
+      );
+
+      container.appendChild(tab);
+
+    }
+  );
+
+}
+
+
+function loadFile(name){
+
+  if(!projectFiles()[name])
+    projectFiles()[name]="";
+
+  currentFile=name;
+
+  editor.value=
+    projectFiles()[name];
+
+  renderFileTabs();
+
+  updateLanguage();
+
+  updateEditor();
+
+}
+
+
+function deleteFile(name){
+
+  const names=
+    Object.keys(projectFiles());
+
+  if(names.length<=1){
+
+    showToast("A project needs at least one file");
+
+    return;
+
+  }
+
+  if(!confirm("Delete "+name+"?"))
+    return;
+
+  delete projectFiles()[name];
+
+  if(currentFile===name){
+
+    currentFile=
+      Object.keys(projectFiles())[0];
+
+  }
+
+  loadFile(currentFile);
+
+  markUnsaved();
+
+}
+
+
+/* =========================================================
+   EDITOR
+========================================================= */
+
+function updateEditor(){
+
+  const text=
+    editor.value;
+
+  const count=
+    text.split("\n").length;
+
+  let nums="";
+
+  for(let i=1;i<=count;i++){
+
+    nums+=i+"<br>";
+
+  }
+
+  lineNumbers.innerHTML=nums;
+
+  highlight.innerHTML=
+    syntaxHighlight(text)+
+    (text.endsWith("\n")?"\n":"");
+
+}
+
+
+function syntaxHighlight(text){
+
+  let escaped=
+    escapeHTML(text);
+
+  escaped=
+    escaped.replace(
+      /(&lt;!--[\s\S]*?--&gt;)/g,
+      '<span class="code-comment">$1</span>'
+    );
+
+  escaped=
+    escaped.replace(
+      /(&quot;[^&]*?&quot;|&#39;[^&]*?&#39;|&quot;.*?&quot;|'.*?')/g,
+      '<span class="code-string">$1</span>'
+    );
+
+  escaped=
+    escaped.replace(
+      /(&lt;\/?)([a-zA-Z][\w-]*)/g,
+      '$1<span class="code-tag">$2</span>'
+    );
+
+  escaped=
+    escaped.replace(
+      /(\s)([a-zA-Z_:][\w:-]*)(=)/g,
+      '$1<span class="code-attr">$2</span>$3'
+    );
+
+  escaped=
+    escaped.replace(
+      /\b(const|let|var|function|return|if|else|for|while|new|class|import|from|export|async|await|true|false|null|undefined)\b/g,
+      '<span class="code-keyword">$1</span>'
+    );
+
+  escaped=
+    escaped.replace(
+      /\b(\d+(?:\.\d+)?)\b/g,
+      '<span class="code-number">$1</span>'
+    );
+
+  return escaped;
+
+}
+
+
+function escapeHTML(value){
+
+  return String(value)
+    .replace(/&/g,"&amp;")
+    .replace(/</g,"&lt;")
+    .replace(/>/g,"&gt;")
+    .replace(/"/g,"&quot;")
+    .replace(/'/g,"&#39;");
+
+}
+
+
+editor.addEventListener(
+  "input",
+  ()=>{
+
+    projectFiles()[currentFile]=
+      editor.value;
+
+    currentProject.updatedAt=
+      new Date().toISOString();
+
+    updateEditor();
+
+    markUnsaved();
+
+  }
+);
+
+
+editor.addEventListener(
+  "scroll",
+  ()=>{
+
+    highlight.scrollTop=
+      editor.scrollTop;
+
+    highlight.scrollLeft=
+      editor.scrollLeft;
+
+    lineNumbers.scrollTop=
+      editor.scrollTop;
+
+  }
+);
+
+
+editor.addEventListener(
+  "keydown",
+  event=>{
+
+    if(event.key==="Tab"){
+
+      event.preventDefault();
+
+      const start=
+        editor.selectionStart;
+
+      const end=
+        editor.selectionEnd;
+
+      editor.value=
+        editor.value.substring(0,start)+
+        "  "+
+        editor.value.substring(end);
+
+      editor.selectionStart=
+        editor.selectionEnd=
+        start+2;
+
+      editor.dispatchEvent(
+        new Event("input")
+      );
+
+    }
+
+
+    if(event.ctrlKey && event.key==="s"){
+
+      event.preventDefault();
+
+      saveProject();
+
+    }
+
+
+    if(event.ctrlKey && event.key==="Enter"){
+
+      event.preventDefault();
+
+      runProject();
+
+    }
+
+  }
+);
+
+
+editor.addEventListener(
+  "keyup",
+  ()=>{
+
+    const before=
+      editor.value.substring(
+        0,
+        editor.selectionStart
+      );
+
+    const rows=
+      before.split("\n");
+
+    $("cursorPosition").textContent=
+      "Ln "+
+      rows.length+
+      ", Col "+
+      (rows[rows.length-1].length+1);
+
+  }
+);
+
+
+function updateLanguage(){
+
+  const ext=
+    currentFile
+      .split(".")
+      .pop()
+      .toLowerCase();
+
+  $("languageStatus").textContent=
+    ext==="js"
+      ? "JavaScript"
+      : ext.toUpperCase();
+
+}
+
+
+function markUnsaved(){
+
+  $("saveStatus").textContent=
+    "Unsaved";
+
+  $("saveText").textContent=
+    "Unsaved";
+
+}
+
+
+function saveProject(){
+
+  currentProject.files=
+    projectFiles();
+
+  currentProject.updatedAt=
+    new Date().toISOString();
+
+  saveStorage();
+
+  $("saveStatus").textContent=
+    "Saved";
+
+  $("saveText").textContent=
+    "Saved";
+
+  showToast("Project saved");
+
+}
+
+
+/* =========================================================
+   RUN / PREVIEW
+========================================================= */
+
+function buildProjectHTML(){
+
+  const html=
+    projectFiles()["index.html"] || "";
+
+  const css=
+    projectFiles()["style.css"] || "";
+
+  const js=
+    projectFiles()["script.js"] || "";
+
+  let output=html;
+
+
+  const styleTag=
+    `<style>${css}</style>`;
+
+  const scriptTag=
+    `<script>${js.replace(
+      /<\/script>/gi,
+      "<\\/script>"
+    )}<\/script>`;
+
+
+  if(/<\/head>/i.test(output)){
+
+    output=
+      output.replace(
+        /<\/head>/i,
+        styleTag+"</head>"
+      );
+
+  }else{
+
+    output=
+      styleTag+
+      output;
+
+  }
+
+
+  if(/<\/body>/i.test(output)){
+
+    output=
+      output.replace(
+        /<\/body>/i,
+        scriptTag+"</body>"
+      );
+
+  }else{
+
+    output+=scriptTag;
+
+  }
+
+
+  return output;
+
+}
+
+
+function runProject(){
+
+  saveStorage();
+
+  const output=
+    buildProjectHTML();
+
+  previewFrame.srcdoc=output;
+
+  mobileFrame.srcdoc=output;
+
+  showToast("Preview updated");
+
+}
+
+
+$("runButton").addEventListener(
+  "click",
+  runProject
+);
+
+
+$("runProjectBtn").addEventListener(
+  "click",
+  runProject
+);
+
+
+$("refreshPreview").addEventListener(
+  "click",
+  runProject
+);
+
+
+/* =========================================================
+   DEVICE PREVIEW
+========================================================= */
+
+document
+.querySelectorAll(".device-btn")
+.forEach(button=>{
+
+  button.addEventListener(
+    "click",
+    ()=>{
+
+      if(button.id==="mobilePreviewTop"){
+
+        openPage("mobile-preview");
+
+        runProject();
+
+        return;
+
+      }
+
+      document
+        .querySelectorAll(".device-btn")
+        .forEach(
+          b=>b.classList.remove("active")
+        );
+
+      button.classList.add("active");
+
+      const device=
+        button.dataset.device;
+
+      deviceFrame.className=
+        "device-frame "+
+        device;
+
+    }
+  );
+
+});
+
+
+$("previewSettings").addEventListener(
+  "click",
+  ()=>{
+
+    showToast(
+      "Preview settings are active"
+    );
+
+  }
+);
+
+
+$("openPreviewNew").addEventListener(
+  "click",
+  ()=>{
+
+    const blob=
+      new Blob(
+        [buildProjectHTML()],
+        {type:"text/html"}
+      );
+
+    const url=
+      URL.createObjectURL(blob);
+
+    window.open(
+      url,
+      "_blank"
+    );
+
+    setTimeout(
+      ()=>URL.revokeObjectURL(url),
+      10000
+    );
+
+  }
+);
+
+
+/* =========================================================
+   MOBILE PREVIEW PAGE
+========================================================= */
+
+$("mobilePreviewBtn").addEventListener(
+  "click",
+  ()=>{
+
+    openPage("mobile-preview");
+
+    runProject();
+
+  }
+);
+
+
+$("mobileBack").addEventListener(
+  "click",
+  ()=>{
+
+    openPage("workspace");
+
+  }
+);
+
+
+$("mobileRefresh").addEventListener(
+  "click",
+  runProject
+);
+
+
+/* =========================================================
+   PAGE NAVIGATION
+========================================================= */
+
+function openPage(page){
+
+  document
+    .querySelectorAll(".page")
+    .forEach(
+      p=>p.classList.remove("active")
+    );
+
+
+  const target=
+    $("page-"+page);
+
+  if(target){
+
+    target.classList.add("active");
+
+  }
+
+
+  document
+    .querySelectorAll(".nav-btn[data-page]")
+    .forEach(button=>{
+
+      button.classList.toggle(
+        "active",
+        button.dataset.page===page
+      );
+
+    });
+
+
+  if(page==="projects")
+    renderProjects();
+
+  if(page==="admin")
+    renderAdmin();
+
+  if(page==="settings")
+    updateProfileUI();
+
+}
+
+
+document
+.querySelectorAll(".nav-btn[data-page]")
+.forEach(button=>{
+
+  button.addEventListener(
+    "click",
+    ()=>{
+
+      const page=
+        button.dataset.page;
+
+      if(page==="admin" &&
+         storage.role!=="owner"){
+
+        showToast(
+          "Owner access required"
+        );
+
+        return;
+
+      }
+
+      openPage(page);
+
+    }
+  );
+
+});
+
+
+$("projectsBack").addEventListener(
+  "click",
+  ()=>openPage("workspace")
+);
+
+$("settingsBack").addEventListener(
+  "click",
+  ()=>openPage("workspace")
+);
+
+$("aiPageBack").addEventListener(
+  "click",
+  ()=>openPage("workspace")
+);
+
+$("adminBack").addEventListener(
+  "click",
+  ()=>openPage("workspace")
+);
+
+
+$("backButton").addEventListener(
+  "click",
+  ()=>{
+
+    openPage("projects");
+
+  }
+);
+
+
+/* =========================================================
+   AI
+========================================================= */
+function openAI(){ 
+  aiPanel.classList.add("open"); 
+}
+
+function closeAI(){ 
+  aiPanel.classList.remove("open"); 
+}
+
+$("forgeAIButton").addEventListener(
+  "click",
+  openAI
+);
+
+$("openAIFromPage").addEventListener(
+  "click",
+  openAI
+);
+
+$("closeAI").addEventListener(
+  "click",
+  closeAI
+);
+
+
+function addAIMessage(type, text){ 
+
+  const welcome =
+    aiChat.querySelector(".ai-welcome"); 
+
+  if(welcome)
+    welcome.remove();
+
+  const row =
+    document.createElement("div"); 
+
+  row.className =
+    "chat-message " + type; 
+
+  const bubble =
+    document.createElement("div"); 
+
+  bubble.className =
+    "chat-bubble"; 
+
+  bubble.textContent =
+    text; 
+
+  row.appendChild(bubble); 
+
+  aiChat.appendChild(row); 
+
+  aiChat.scrollTop =
+    aiChat.scrollHeight; 
+}
+
+
+async function forgeAIResponse(
+  message,
+  action = "chat"
+){
+
+  try {
+
+    const project =
+      currentProject || {};
+
+    const files =
+      project.files || {};
+
+    const currentCode =
+      files[currentFile] ||
+      editor.value ||
+      "";
+
+    const language =
+      currentFile.endsWith(".html")
+        ? "html"
+        : currentFile.endsWith(".css")
+        ? "css"
+        : currentFile.endsWith(".js")
+        ? "javascript"
+        : "text";
+
+    const response =
+      await fetch("/api/forge-ai", {
+
+        method: "POST",
+
+        headers: {
+          "Content-Type":
+            "application/json"
+        },
+
+        body: JSON.stringify({
+
+          message: message,
+
+          action: action,
+
+          code: currentCode,
+
+          language: language,
+
+          project:
+            project.name ||
+            "ForgeCode"
+
+        })
+
+      });
+
+
+    const data =
+      await response.json();
+
+
+    if(
+      !response.ok ||
+      !data.success
+    ){
+
+      throw new Error(
+        data.error ||
+        "ForgeAI request failed."
+      );
+
+    }
+
+
+    return data.reply;
+
+
+  } catch(error){
+
+    console.error(
+      "ForgeAI error:",
+      error
+    );
+
+
+    return (
+      "ForgeAI could not connect " +
+      "to the server.\n\n" +
+      error.message
+    );
+
+  }
+
+}
+
+
+async function sendAI(){
+
+  const message =
+    aiInput.value.trim();
+
+  if(!message)
+    return;
+
+
+  addAIMessage(
+    "user",
+    message
+  );
+
+
+  aiInput.value = "";
+
+
+  addAIMessage(
+    "ai",
+    "ForgeAI is thinking..."
+  );
+
+
+  const reply =
+    await forgeAIResponse(
+      message,
+      "chat"
+    );
+
+
+  const messages =
+    aiChat.querySelectorAll(
+      ".chat-message.ai"
+    );
+
+
+  const lastMessage =
+    messages[messages.length - 1];
+
+
+  if(lastMessage){
+
+    const bubble =
+      lastMessage.querySelector(
+        ".chat-bubble"
+      );
+
+
+    if(bubble){
+
+      bubble.textContent =
+        reply;
+
+    }
+
+  }
+
+}
+
+
+$("sendAI").addEventListener(
+  "click",
+  sendAI
+);
+
+
+aiInput.addEventListener(
+  "keydown",
+  event => {
+
+    if(
+      event.key === "Enter" &&
+      event.ctrlKey
+    ){
+
+      event.preventDefault();
+
+      sendAI();
+
+    }
+
+  }
+);
+
+
+document
+  .querySelectorAll(".ai-action")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        openAI();
+
+
+        const action =
+          button.dataset.ai;
+
+
+        addAIMessage(
+          "user",
+          action
+        );
+
+
+        addAIMessage(
+          "ai",
+          "ForgeAI is analyzing your code..."
+        );
+
+
+        const prompt = `
+Perform this action on my current project:
+
+${action}
+
+Current file:
+${currentFile}
+
+Analyze the code and give me a useful professional response.
+If code needs to be changed, provide the corrected code.
+`;
+
+
+        const reply =
+          await forgeAIResponse(
+            prompt,
+            action
+          );
+
+
+        const messages =
+          aiChat.querySelectorAll(
+            ".chat-message.ai"
+          );
+
+
+        const lastMessage =
+          messages[messages.length - 1];
+
+
+        if(lastMessage){
+
+          const bubble =
+            lastMessage.querySelector(
+              ".chat-bubble"
+            );
+
+
+          if(bubble){
+
+            bubble.textContent =
+              reply;
+
+          }
+
+        }
+
+      }
+    );
+
+  });
+
+
+document
+  .querySelectorAll("[data-ai-page]")
+  .forEach(button => {
+
+    button.addEventListener(
+      "click",
+      async () => {
+
+        openAI();
+
+
+        const action =
+          button.dataset.aiPage;
+
+
+        addAIMessage(
+          "user",
+          action
+        );
+
+
+        addAIMessage(
+          "ai",
+          "ForgeAI is working..."
+        );
+
+
+        const reply =
+          await forgeAIResponse(
+            action,
+            action
+          );
+
+
+        const messages =
+          aiChat.querySelectorAll(
+            ".chat-message.ai"
+          );
+
+
+        const lastMessage =
+          messages[messages.length - 1];
+
+
+        if(lastMessage){
+
+          const bubble =
+            lastMessage.querySelector(
+              ".chat-bubble"
+            );
+
+
+          if(bubble){
+
+            bubble.textContent =
+              reply;
+
+          }
+
+        }
+
+      }
+    );
+
+  });
+  
+/* =========================================================
+   NEW FILE
+========================================================= */
+
+$("newFileBtn").addEventListener(
+  "click",
+  ()=>{
+
+    $("newFileModal").classList.add("show");
+
+    $("newFileName").focus();
+
+  }
+);
+
+
+$("createFile").addEventListener(
+  "click",
+  ()=>{
+
+    const name=
+      $("newFileName")
+        .value
+        .trim();
+
+    if(!name){
+
+      showToast("Enter a file name");
+
+      return;
+
+    }
+
+    if(projectFiles()[name]){
+
+      showToast("File already exists");
+
+      return;
+
+    }
+
+    projectFiles()[name]="";
+
+    $("newFileModal")
+      .classList.remove("show");
+
+    $("newFileName").value="";
+
+    loadFile(name);
+
+    markUnsaved();
+
+    showToast(
+      name+" created"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   PROJECTS PAGE
+========================================================= */
+
+function renderProjects(){
+
+  const grid=
+    $("projectsGrid");
+
+  grid.innerHTML="";
+
+
+  storage.projects.forEach(
+    project=>{
+
+      const card=
+        document.createElement("div");
+
+      card.className=
+        "project-card";
+
+
+      const updated=
+        new Date(
+          project.updatedAt
+        ).toLocaleDateString();
+
+
+      card.innerHTML=`
+        <div class="project-card-top">
+          <div class="project-card-icon">◈</div>
+        </div>
+
+        <h3>${escapeHTML(project.name)}</h3>
+
+        <p>ForgeCode Workspace</p>
+
+        <div class="project-card-meta">
+          <span>${Object.keys(project.files).length} files</span>
+          <span>Updated ${updated}</span>
+        </div>
+
+        <div class="project-card-actions">
+
+          <button data-action="open">
+            Open
+          </button>
+
+          <button data-action="rename">
+            Rename
+          </button>
+
+          <button data-action="delete" class="delete">
+            Delete
+          </button>
+
+        </div>
+      `;
+
+
+      card
+        .querySelector('[data-action="open"]')
+        .addEventListener(
+          "click",
+          ()=>{
+
+            storage.currentProject=
+              project.id;
+
+            saveStorage();
+
+            currentProject=project;
+
+            currentFile=
+              Object.keys(project.files)[0] ||
+              "index.html";
+
+            loadFile(currentFile);
+
+            updateProjectUI();
+
+            openPage("workspace");
+
+            runProject();
+
+          }
+        );
+
+
+      card
+        .querySelector('[data-action="rename"]')
+        .addEventListener(
+          "click",
+          ()=>{
+
+            openRename(project);
+
+          }
+        );
+
+
+      card
+        .querySelector('[data-action="delete"]')
+        .addEventListener(
+          "click",
+          ()=>{
+
+            deleteProject(project.id);
+
+          }
+        );
+
+
+      grid.appendChild(card);
+
+    }
+  );
+
+
+  if(storage.projects.length===0){
+
+    grid.innerHTML=
+      "<p style='color:#77818c;font-size:11px'>No projects yet.</p>";
+
+  }
+
+}
+
+
+$("createProjectBtn").addEventListener(
+  "click",
+  ()=>{
+
+    $("newProjectModal")
+      .classList.add("show");
+
+    $("newProjectName").focus();
+
+  }
+);
+
+
+$("createProject").addEventListener(
+  "click",
+  ()=>{
+
+    const name=
+      $("newProjectName")
+        .value
+        .trim();
+
+    if(!name){
+
+      showToast(
+        "Enter a project name"
+      );
+
+      return;
+
+    }
+
+
+    const project=
+      createProjectObject(name);
+
+    storage.projects.unshift(project);
+
+    storage.currentProject=
+      project.id;
+
+    currentProject=project;
+
+    currentFile="index.html";
+
+    saveStorage();
+
+    $("newProjectModal")
+      .classList.remove("show");
+
+    $("newProjectName").value="";
+
+    loadFile("index.html");
+
+    updateProjectUI();
+
+    openPage("workspace");
+
+    runProject();
+
+    showToast(
+      "Project created"
+    );
+
+  }
+);
+
+
+function deleteProject(id){
+
+  if(storage.projects.length<=1){
+
+    showToast(
+      "You need at least one project"
+    );
+
+    return;
+
+  }
+
+  const project=
+    storage.projects.find(
+      p=>p.id===id
+    );
+
+  if(!project)
+    return;
+
+  if(!confirm(
+    'Delete "'+
+    project.name+
+    '" permanently?'
+  ))
+    return;
+
+
+  storage.projects=
+    storage.projects.filter(
+      p=>p.id!==id
+    );
+
+
+  if(storage.currentProject===id){
+
+    storage.currentProject=
+      storage.projects[0].id;
+
+    currentProject=
+      storage.projects[0];
+
+    currentFile=
+      Object.keys(
+        currentProject.files
+      )[0];
+
+    loadFile(currentFile);
+
+    updateProjectUI();
+
+  }
+
+
+  saveStorage();
+
+  renderProjects();
+
+  showToast(
+    "Project deleted"
+  );
+
+}
+
+
+/* =========================================================
+   RENAME PROJECT
+========================================================= */
+
+let renameTarget=null;
+
+
+function openRename(project){
+
+  renameTarget=
+    project || currentProject;
+
+  $("renameInput").value=
+    renameTarget.name;
+
+  $("renameModal")
+    .classList.add("show");
+
+  $("renameInput").focus();
+
+}
+
+
+$("renameProject").addEventListener(
+  "click",
+  ()=>openRename(currentProject)
+);
+
+
+$("confirmRename").addEventListener(
+  "click",
+  ()=>{
+
+    if(!renameTarget)
+      return;
+
+    const name=
+      $("renameInput")
+        .value
+        .trim();
+
+    if(!name){
+
+      showToast(
+        "Enter a project name"
+      );
+
+      return;
+
+    }
+
+    renameTarget.name=name;
+
+    renameTarget.updatedAt=
+      new Date().toISOString();
+
+    saveStorage();
+
+    updateProjectUI();
+
+    renderProjects();
+
+    $("renameModal")
+      .classList.remove("show");
+
+    showToast(
+      "Project renamed"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   SEARCH
+========================================================= */
+
+$("searchFilesBtn").addEventListener(
+  "click",
+  ()=>{
+
+    $("searchModal")
+      .classList.add("show");
+
+    $("searchInput").focus();
+
+    renderSearch("");
+
+  }
+);
+
+
+$("searchInput").addEventListener(
+  "input",
+  event=>
+    renderSearch(
+      event.target.value
+    )
+);
+
+
+function renderSearch(query){
+
+  const result=
+    $("searchResults");
+
+  result.innerHTML="";
+
+  const q=
+    query.toLowerCase();
+
+
+  Object.entries(
+    projectFiles()
+  ).forEach(
+    ([name,content])=>{
+
+      if(
+        !q ||
+        name.toLowerCase().includes(q) ||
+        content.toLowerCase().includes(q)
+      ){
+
+        const item=
+          document.createElement("div");
+
+        item.className=
+          "search-item";
+
+        item.innerHTML=`
+          <strong>${escapeHTML(name)}</strong>
+          <span>${content.length} characters</span>
+        `;
+
+        item.addEventListener(
+          "click",
+          ()=>{
+
+            loadFile(name);
+
+            $("searchModal")
+              .classList.remove("show");
+
+          }
+        );
+
+        result.appendChild(item);
+
+      }
+
+    }
+  );
+
+}
+
+
+/* =========================================================
+   EDITOR SETTINGS
+========================================================= */
+
+$("editorSettings").addEventListener(
+  "click",
+  ()=>{
+
+    const current=
+      parseInt(
+        getComputedStyle(editor)
+          .fontSize
+      );
+
+    const next=
+      current>=16
+        ? 11
+        : current+1;
+
+    editor.style.fontSize=
+      next+"px";
+
+    highlight.style.fontSize=
+      next+"px";
+
+    lineNumbers.style.fontSize=
+      next+"px";
+
+    showToast(
+      "Editor font: "+next+"px"
+    );
+
+  }
+);
+
+
+$("fontSize").addEventListener(
+  "change",
+  event=>{
+
+    const size=
+      event.target.value;
+
+    editor.style.fontSize=
+      size+"px";
+
+    highlight.style.fontSize=
+      size+"px";
+
+    lineNumbers.style.fontSize=
+      size+"px";
+
+    storage.settings.fontSize=
+      size;
+
+    saveStorage();
+
+  }
+);
+
+
+/* =========================================================
+   PREVIEW SETTINGS
+========================================================= */
+
+$("previewSettings").addEventListener(
+  "click",
+  ()=>{
+
+    const options=
+      [
+        "Preview settings",
+        "Desktop / Laptop / Tablet",
+        "Mobile preview available from the Mobile button"
+      ];
+
+    alert(options.join("\n"));
+
+  }
+);
+
+
+/* =========================================================
+   ADMIN
+========================================================= */
+
+function renderAdmin(){
+
+  if(storage.role!=="owner"){
+
+    showToast(
+      "Owner access required"
+    );
+
+    openPage("workspace");
+
+    return;
+
+  }
+
+
+  $("statProjects").textContent=
+    storage.projects.length;
+
+
+  $("statFiles").textContent=
+    storage.projects.reduce(
+      (sum,p)=>
+        sum+
+        Object.keys(p.files).length,
+      0
+    );
+
+
+  $("statAdmins").textContent=
+    storage.admins.length;
+
+
+  const list=
+    $("adminList");
+
+  list.innerHTML="";
+
+
+  if(storage.admins.length===0){
+
+    list.innerHTML=
+      "<p style='color:#66717d;font-size:9px'>No administrators added.</p>";
+
+    return;
+
+  }
+
+
+  storage.admins.forEach(
+    (admin,index)=>{
+
+      const row=
+        document.createElement("div");
+
+      row.className=
+        "admin-row";
+
+      row.innerHTML=`
+        <div class="admin-user">
+
+          <img
+            src="${makeAvatarData(admin.name)}"
+            alt=""
+          >
+
+          <div>
+
+            <strong>
+              ${escapeHTML(admin.name)}
+            </strong>
+
+            <small>
+              Administrator
+            </small>
+
+          </div>
+
+        </div>
+
+        <button
+          class="remove-admin"
+          title="Remove administrator"
+        >
+          ×
+        </button>
+      `;
+
+
+      row
+        .querySelector(".remove-admin")
+        .addEventListener(
+          "click",
+          ()=>{
+
+            storage.admins.splice(
+              index,
+              1
+            );
+
+            saveStorage();
+
+            renderAdmin();
+
+            showToast(
+              "Administrator removed"
+            );
+
+          }
+        );
+
+
+      list.appendChild(row);
+
+    }
+  );
+
+}
+
+
+$("addAdmin").addEventListener(
+  "click",
+  ()=>{
+
+    if(storage.role!=="owner")
+      return;
+
+
+    const input=
+      $("adminNameInput");
+
+    const name=
+      input.value.trim();
+
+    if(!name){
+
+      showToast(
+        "Enter administrator name"
+      );
+
+      return;
+
+    }
+
+
+    storage.admins.push({
+      name:name,
+      createdAt:new Date().toISOString()
+    });
+
+
+    input.value="";
+
+    saveStorage();
+
+    renderAdmin();
+
+    showToast(
+      "Administrator added"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   EXPORT DATA
+========================================================= */
+
+$("exportData").addEventListener(
+  "click",
+  ()=>{
+
+    if(storage.role!=="owner")
+      return;
+
+
+    const blob=
+      new Blob(
+        [
+          JSON.stringify(
+            storage,
+            null,
+            2
+          )
+        ],
+        {
+          type:"application/json"
+        }
+      );
+
+
+    downloadBlob(
+      blob,
+      "forgecode-workspace.json"
+    );
+
+
+    showToast(
+      "Workspace exported"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   CLEAR WORKSPACE
+========================================================= */
+
+$("clearWorkspace").addEventListener(
+  "click",
+  ()=>{
+
+    if(storage.role!=="owner")
+      return;
+
+
+    if(!confirm(
+      "This will delete local ForgeCode data. Continue?"
+    ))
+      return;
+
+
+    localStorage.removeItem(
+      STORAGE_KEY
+    );
+
+    location.reload();
+
+  }
+);
+
+
+/* =========================================================
+   DOWNLOAD WHOLE PROJECT
+========================================================= */
+
+$("downloadProject").addEventListener(
+  "click",
+  downloadProject
+);
+
+
+function downloadProject(){
+
+  const files=
+    projectFiles();
+
+
+  /*
+    Creates a complete project package without
+    requiring a server.
+  */
+
+  const entries=
+    Object.entries(files);
+
+
+  let html=
+`<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>${escapeHTML(currentProject.name)}</title>
+</head>
+<body>
+<h2>${escapeHTML(currentProject.name)}</h2>
+<p>Project downloaded from ForgeCode.</p>
+<ul>`;
+
+
+  entries.forEach(
+    ([name])=>{
+
+      html+=
+        "<li>"+
+        escapeHTML(name)+
+        "</li>";
+
+    }
+  );
+
+
+  html+=
+`</ul>
+</body>
+</html>`;
+
+
+  /*
+    Download each actual project file.
+    The browser cannot create a real folder from a
+    normal click, so each file is downloaded together
+    using a single generated HTML project manifest.
+  */
+
+  const manifest={
+    project:currentProject.name,
+    files:files,
+    generatedAt:new Date().toISOString()
+  };
+
+
+  const blob=
+    new Blob(
+      [
+        JSON.stringify(
+          manifest,
+          null,
+          2
+        )
+      ],
+      {
+        type:"application/json"
+      }
+    );
+
+
+  downloadBlob(
+    blob,
+    slugify(currentProject.name)+
+    "-forgecode-project.json"
+  );
+
+
+  /*
+    Also download the runnable index.html.
+  */
+
+  const runnable=
+    buildProjectHTML();
+
+
+  setTimeout(
+    ()=>{
+
+      downloadBlob(
+        new Blob(
+          [runnable],
+          {type:"text/html"}
+        ),
+        "index.html"
+      );
+
+    },
+    250
+  );
+
+
+  showToast(
+    "Project download started"
+  );
+
+}
+
+
+function downloadBlob(blob,name){
+
+  const url=
+    URL.createObjectURL(blob);
+
+  const link=
+    document.createElement("a");
+
+  link.href=url;
+
+  link.download=name;
+
+  document.body.appendChild(link);
+
+  link.click();
+
+  link.remove();
+
+  setTimeout(
+    ()=>URL.revokeObjectURL(url),
+    3000
+  );
+
+}
+
+
+function slugify(value){
+
+  return String(value)
+    .toLowerCase()
+    .replace(/[^a-z0-9]+/g,"-")
+    .replace(/^-|-$/g,"")
+    || "forgecode-project";
+
+}
+
+
+/* =========================================================
+   CREATE / OPEN MODALS
+========================================================= */
+
+document
+.querySelectorAll(".close-modal")
+.forEach(button=>{
+
+  button.addEventListener(
+    "click",
+    ()=>{
+
+      button
+        .closest(".overlay")
+        .classList.remove("show");
+
+    }
+  );
+
+});
+
+
+document
+.querySelectorAll(".overlay")
+.forEach(overlay=>{
+
+  overlay.addEventListener(
+    "click",
+    event=>{
+
+      if(event.target===overlay){
+
+        overlay.classList.remove(
+          "show"
+        );
+
+      }
+
+    }
+  );
+
+});
+
+
+/* =========================================================
+   RESET WORKSPACE
+========================================================= */
+
+$("resetWorkspace").addEventListener(
+  "click",
+  ()=>{
+
+    if(!confirm(
+      "Reset editor files to the default project?"
+    ))
+      return;
+
+
+    currentProject.files=
+      JSON.parse(
+        JSON.stringify(
+          DEFAULT_FILES
+        )
+      );
+
+    currentProject.updatedAt=
+      new Date().toISOString();
+
+    currentFile="index.html";
+
+    saveStorage();
+
+    loadFile(currentFile);
+
+    runProject();
+
+    showToast(
+      "Workspace reset"
+    );
+
+  }
+);
+
+
+/* =========================================================
+   BACK BUTTON
+========================================================= */
+
+window.addEventListener(
+  "popstate",
+  ()=>{
+
+    openPage("workspace");
+
+  }
+);
+
+
+/* =========================================================
+   ESCAPE
+========================================================= */
+
+document.addEventListener(
+  "keydown",
+  event=>{
+
+    if(event.key==="Escape"){
+
+      document
+        .querySelectorAll(".overlay")
+        .forEach(
+          overlay=>
+            overlay.classList.remove("show")
+        );
+
+      closeAI();
+
+    }
+
+  }
+);
+
+
+/* =========================================================
+   TOAST
+========================================================= */
+
+let toastTimer;
+
+function showToast(message){
+
+  const toast=
+    $("toast");
+
+  toast.textContent=
+    message;
+
+  toast.classList.add("show");
+
+  clearTimeout(
+    toastTimer
+  );
+
+  toastTimer=
+    setTimeout(
+      ()=>{
+        toast.classList.remove(
+          "show"
+        );
+      },
+      2300
+    );
+
+}
+
+
+/* =========================================================
+   INITIALIZE
+========================================================= */
+
+updateProfileUI();
+
+updateProjectUI();
+
+renderFileTabs();
+
+loadFile(currentFile);
+
+runProject();
+
+renderProjects();
+
+renderAdmin();
+
+
+/*
+  Restore editor font size.
+*/
+
+const savedFont=
+  storage.settings.fontSize ||
+  "12";
+
+$("fontSize").value=
+  savedFont;
+
+editor.style.fontSize=
+  savedFont+"px";
+
+highlight.style.fontSize=
+  savedFont+"px";
+
+lineNumbers.style.fontSize=
+  savedFont+"px";
+
+
+})();
+</script>
+
+</body>
+</html>
